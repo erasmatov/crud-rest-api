@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration SYSTEM
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/database24</property>
+        <property name="connection.username">root</property>
+        <property name="connection.password">password</property>
+        <property name="connection.pool_size">1</property>
+        <property name="hibernate.hbm2ddl.auto">validate</property>
+        <property name="current_session_context_class">thread</property>
+
+        <mapping class="net.erasmatov.crudapi.model.File"/>
+        <mapping class="net.erasmatov.crudapi.model.Event"/>
+        <mapping class="net.erasmatov.crudapi.model.User"/>
+    </session-factory>
+</hibernate-configuration>
