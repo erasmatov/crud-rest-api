@@ -17,7 +17,8 @@ public class User {
     @Exclude
     @OneToMany(mappedBy = "user")
     private List<Event> events;
-    @Column(name = "status")
+    @Column(name = "status", columnDefinition = "ENUM('ACTIVE', 'DELETED')")
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     public User() {

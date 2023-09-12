@@ -1,44 +1,30 @@
 package net.erasmatov.crudapi.controller;
 
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.erasmatov.crudapi.annotation.Exclude;
+import net.erasmatov.crudapi.annotation.ExcludeAnnotationExclusionStrategy;
 import net.erasmatov.crudapi.model.User;
 import net.erasmatov.crudapi.service.UserService;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
+import java.util.Objects;
 
 import static net.erasmatov.crudapi.utils.ServletUtil.getPathFromUrl;
 import static net.erasmatov.crudapi.utils.ServletUtil.parseRequestBody;
 
 public class UserRestControllerV1 extends HttpServlet {
-    private final UserService userService = new UserService();;
+    private final UserService userService = new UserService();
+    ;
     private Gson configuredGson;
 
     @Override
     public void init() {
-        ExclusionStrategy strategy = new ExclusionStrategy() {
-            @Override
-            public boolean shouldSkipField(FieldAttributes fieldAttributes) {
-                return fieldAttributes.getAnnotation(Exclude.class) != null;
-            }
-
-            @Override
-            public boolean shouldSkipClass(Class<?> clazz) {
-                return false;
-            }
-        };
-
         configuredGson = new GsonBuilder()
-                .addSerializationExclusionStrategy(strategy).create();
+                .addSerializationExclusionStrategy(ExcludeAnnotationExclusionStrategy.getStrategy()).create();
     }
 
     @Override
@@ -49,15 +35,13 @@ public class UserRestControllerV1 extends HttpServlet {
 
         if (idFromPath != 0) {
             User user = userService.getUserById(idFromPath);
-            if (user == null) {
+            if (Objects.isNull(user)) {
                 resp.sendError(404);
+            } else {
+                respWriter.print(configuredGson.toJson(user));
             }
-            respWriter.print(configuredGson.toJson(user));
-        }
-
-        if (idFromPath == 0) {
-            List<User> userList = userService.getAllUsers();
-            respWriter.print(configuredGson.toJson(userList));
+        } else {
+            respWriter.print(configuredGson.toJson(userService.getAllUsers()));
         }
     }
 
@@ -70,13 +54,47 @@ public class UserRestControllerV1 extends HttpServlet {
     }
 
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPut(req, resp);
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        int idFromPath = getPathFromUrl(req);
+        PrintWriter respWriter = resp.getWriter();
+        resp.setContentType("text/json");
+
+        if (idFromPath != 0) {
+            User user = userService.getUserById(idFromPath);
+            if (Objects.isNull(user)) {
+                resp.sendError(404);
+            } else {
+                User dataUserFromReq = configuredGson.fromJson(parseRequestBody(req), User.class);
+
+                if (Objects.nonNull(dataUserFromReq.getUsername()))
+                    user.setUsername(dataUserFromReq.getUsername());
+
+                if (Objects.nonNull(dataUserFromReq.getStatus()))
+                    user.setStatus(dataUserFromReq.getStatus());
+
+                respWriter.print(configuredGson.toJson(userService.updateUser(user)));
+            }
+        } else {
+            resp.sendError(404);
+        }
     }
 
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doDelete(req, resp);
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        int idFromPath = getPathFromUrl(req);
+        PrintWriter respWriter = resp.getWriter();
+
+        if (idFromPath != 0) {
+            User user = userService.getUserById(idFromPath);
+            if (Objects.isNull(user)) {
+                resp.sendError(404);
+            } else {
+                userService.deleteUserById(idFromPath);
+                resp.setStatus(204);
+            }
+        } else {
+            resp.sendError(404);
+        }
     }
 
 }

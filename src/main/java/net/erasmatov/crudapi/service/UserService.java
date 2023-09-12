@@ -1,5 +1,6 @@
 package net.erasmatov.crudapi.service;
 
+import net.erasmatov.crudapi.model.Status;
 import net.erasmatov.crudapi.model.User;
 import net.erasmatov.crudapi.repository.UserRepository;
 import net.erasmatov.crudapi.repository.hibernate.HibernateUserRepositoryImpl;
@@ -18,6 +19,7 @@ public class UserService {
     }
 
     public User saveUser(User user) {
+        user.setStatus(Status.ACTIVE);
         return userRepository.save(user);
     }
 

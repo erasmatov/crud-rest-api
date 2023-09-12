@@ -14,14 +14,12 @@ public class Event {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "timestamp")
     private LocalDateTime timestamp;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "file_id")
     private File file;
-    @Column(name = "status")
-    private Status status;
 
     public Event() {
     }
@@ -56,14 +54,6 @@ public class Event {
 
     public void setFile(File file) {
         this.file = file;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
     }
 
 }

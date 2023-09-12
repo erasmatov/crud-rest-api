@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
+import java.util.Objects;
 
 import static net.erasmatov.crudapi.utils.ServletUtil.getPathFromUrl;
 
@@ -32,15 +32,13 @@ public class FileRestControllerV1 extends HttpServlet {
 
         if (idFromPath != 0) {
             File file = fileService.getFileById(idFromPath);
-            if (file == null) {
+            if (Objects.isNull(file)) {
                 resp.sendError(404);
+            } else {
+                respWriter.print(gson.toJson(file));
             }
-            respWriter.print(gson.toJson(file));
-        }
-
-        if (idFromPath == 0) {
-            List<File> fileList = fileService.getAllFiles();
-            respWriter.print(gson.toJson(fileList));
+        } else {
+            respWriter.print(gson.toJson(fileService.getAllFiles()));
         }
     }
 
@@ -50,7 +48,7 @@ public class FileRestControllerV1 extends HttpServlet {
         PrintWriter respWriter = resp.getWriter();
         resp.setContentType("text/json");
 
-        if (file != null) {
+        if (Objects.nonNull(file)) {
             respWriter.print(gson.toJson(file));
         } else {
             resp.sendError(404);

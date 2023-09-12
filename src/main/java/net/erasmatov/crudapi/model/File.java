@@ -13,8 +13,6 @@ public class File {
     private String name;
     @Column(name = "path")
     private String path;
-    @Column(name = "status")
-    private Status status;
 
     public File() {
     }
@@ -41,14 +39,6 @@ public class File {
 
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
     }
 
 }

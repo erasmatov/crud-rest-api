@@ -30,7 +30,7 @@ public class HibernateEventRepositoryImpl implements EventRepository {
     @Override
     public List<Event> getAll() {
         try (Session session = HibernateUtil.getSession()) {
-            return session.createQuery("FROM Event e LEFT JOIN FETCH e.file", Event.class).list();
+            return session.createQuery("FROM Event e LEFT JOIN FETCH e.user", Event.class).list();
         }
     }
 
@@ -38,8 +38,8 @@ public class HibernateEventRepositoryImpl implements EventRepository {
     public Event getById(Integer id) {
         try (Session session = HibernateUtil.getSession()) {
             Query<Event> query = session.createQuery(
-                    "FROM Event e LEFT JOIN FETCH e.file WHERE e.id = :id", Event.class);
-            query.setParameter(id, "id");
+                    "FROM Event e LEFT JOIN FETCH e.user WHERE e.id = :id", Event.class);
+            query.setParameter("id", id);
             return query.uniqueResult();
         }
     }

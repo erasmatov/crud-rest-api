@@ -96,7 +96,7 @@ public class FileService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return new File();
+        return null;
     }
 
     public File updateFile(File file) {
