@@ -11,7 +11,7 @@
         <description>Location to store uploaded file</description>
         <param-name>file-upload-path</param-name>
         <param-value>
-            /Users/erasmatov/IdeaProjects/crud-rest-api/src/main/resources/uploaded/
+            src/main/resources/uploaded/
         </param-value>
     </context-param>
 
